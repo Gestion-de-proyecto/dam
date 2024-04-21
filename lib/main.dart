@@ -80,14 +80,14 @@ class _MainPageState extends State<MainPage> {
           ),
         ),
       ),
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: 0,
-          children: [
-            Expanded(
-              child: CameraPreview(_controller), 
-            ),
-            Padding(
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: CameraPreview(_controller),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Container(
                 width: 60,
@@ -107,8 +107,8 @@ class _MainPageState extends State<MainPage> {
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
