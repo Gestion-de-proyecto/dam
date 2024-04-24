@@ -1,32 +1,47 @@
 import 'package:camera/camera.dart';
-import '/main_page.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   final cameras = await availableCameras();
   runApp(MainApp(cameras: cameras));
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   final List<CameraDescription> cameras;
 
   const MainApp({Key? key, required this.cameras}) : super(key: key);
 
   @override
+  _MainAppState createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  ThemeMode _themeMode = ThemeMode.light;
+
+  void _toggleTheme() {
+    setState(() {
+      _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MainPage(cameras: cameras),
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: _themeMode,
+      home: MainPage(cameras: widget.cameras, toggleTheme: _toggleTheme),
     );
   }
 }
 
 class MainPage extends StatefulWidget {
   final List<CameraDescription> cameras;
+  final VoidCallback toggleTheme;
 
-  const MainPage({Key? key, required this.cameras}) : super(key: key);
+  const MainPage({Key? key, required this.cameras, required this.toggleTheme}) : super(key: key);
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -39,7 +54,7 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     _controller = CameraController(
-      widget.cameras[0], 
+      widget.cameras[0],
       ResolutionPreset.medium,
     );
 
@@ -62,6 +77,10 @@ class _MainPageState extends State<MainPage> {
     if (!_controller.value.isInitialized) {
       return Container();
     }
+
+    // Keep button colors constant, only adjust the bar's background
+    Color backgroundColor = Theme.of(context).bottomAppBarColor;
+
     return Scaffold(
       backgroundColor: Colors.blue,
       appBar: AppBar(
@@ -79,6 +98,12 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.brightness_6),
+            onPressed: widget.toggleTheme,
+          ),
+        ],
       ),
       body: Stack(
         children: [
@@ -112,13 +137,13 @@ class _MainPageState extends State<MainPage> {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: backgroundColor,
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),
               spreadRadius: 5,
               blurRadius: 7,
-              offset: const Offset(0, 3), 
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -128,53 +153,29 @@ class _MainPageState extends State<MainPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.search, color: Colors.white),
-                onPressed: () {
-                  // Add onPressed logic here
-                },
-              ),
-            ),
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.mic, color: Colors.white),
-                onPressed: () {
-                  // Add onPressed logic here
-                },
-              ),
-            ),
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: IconButton(
-                icon: const Icon(Icons.aspect_ratio, color: Colors.white),
-                onPressed: () {
-                  // Add onPressed logic here
-                },
-              ),
-            ),
+            _buildIconButton(Icons.search, Colors.white),
+            _buildIconButton(Icons.mic, Colors.white),
+            _buildIconButton(Icons.aspect_ratio, Colors.white),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildIconButton(IconData iconData, Color color) {
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        color: Colors.blue, // This ensures the button's background remains white
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: IconButton(
+        icon: Icon(iconData, color: color),
+        onPressed: () {
+          // Add onPressed logic here
+        },
       ),
     );
   }
