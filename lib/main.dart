@@ -96,6 +96,7 @@ class _MainPageState extends State<MainPage> {
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
+                
                 child: IconButton(
                   icon: const Icon(
                     Icons.circle,
@@ -104,6 +105,7 @@ class _MainPageState extends State<MainPage> {
                   onPressed: () {
                     // Add onPressed logic here
                   },
+                  tooltip: 'Captura',
                 ),
               ),
             ),
@@ -141,6 +143,7 @@ class _MainPageState extends State<MainPage> {
                 onPressed: () {
                   // Add onPressed logic here
                 },
+                tooltip: 'Buscar',
               ),
             ),
             Container(
@@ -156,6 +159,7 @@ class _MainPageState extends State<MainPage> {
                 onPressed: () {
                   // Add onPressed logic here
                 },
+                tooltip: 'Comando de voz',
               ),
             ),
             Container(
@@ -167,10 +171,11 @@ class _MainPageState extends State<MainPage> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: IconButton(
-                icon: const Icon(Icons.aspect_ratio, color: Colors.white),
+                icon: const Icon(Icons.library_books_outlined, color: Colors.white),
                 onPressed: () {
                   // Add onPressed logic here
                 },
+                tooltip: 'Texto',
               ),
             ),
           ],
