@@ -1,32 +1,49 @@
-import 'package:camera/camera.dart';
-import '/main_page.dart';
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   final cameras = await availableCameras();
   runApp(MainApp(cameras: cameras));
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   final List<CameraDescription> cameras;
 
   const MainApp({Key? key, required this.cameras}) : super(key: key);
 
   @override
+  _MainAppState createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  ThemeMode _themeMode = ThemeMode.light;
+
+  void _toggleTheme() {
+    setState(() {
+      _themeMode =
+          _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: MainPage(cameras: cameras),
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: _themeMode,
+      home: MainPage(cameras: widget.cameras, toggleTheme: _toggleTheme),
     );
   }
 }
 
 class MainPage extends StatefulWidget {
   final List<CameraDescription> cameras;
+  final VoidCallback toggleTheme;
 
-  const MainPage({Key? key, required this.cameras}) : super(key: key);
+  const MainPage({Key? key, required this.cameras, required this.toggleTheme})
+      : super(key: key);
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -38,11 +55,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    _controller = CameraController(
-      widget.cameras[0], 
-      ResolutionPreset.medium,
-    );
-
+    _controller = CameraController(widget.cameras[0], ResolutionPreset.medium);
     _controller.initialize().then((_) {
       if (!mounted) {
         return;
@@ -62,6 +75,9 @@ class _MainPageState extends State<MainPage> {
     if (!_controller.value.isInitialized) {
       return Container();
     }
+
+    Color backgroundColor = Theme.of(context).bottomAppBarColor;
+
     return Scaffold(
       backgroundColor: Colors.blue,
       appBar: AppBar(
@@ -69,16 +85,22 @@ class _MainPageState extends State<MainPage> {
         elevation: 0,
         leading: Image.asset('assets/images/Logo.png'),
         title: const Center(
-          child: Text(
-            "DAM",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
+            child: Text(
+          "DAM",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+        )),
+        actions: [
+          Semantics(
+            label: 'Change theme',
+            child: IconButton(
+              icon: const Icon(Icons.brightness_6),
+              onPressed: widget.toggleTheme,
+              tooltip: 'Cambiar tema',
             ),
           ),
-        ),
+        ],
       ),
       body: Stack(
         children: [
@@ -96,7 +118,6 @@ class _MainPageState extends State<MainPage> {
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
-                
                 child: IconButton(
                   icon: const Icon(
                     Icons.circle,
@@ -112,24 +133,11 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: const Offset(0, 3), 
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        width: double.infinity,
-        height: 80,
+      bottomNavigationBar: BottomAppBar(
+        color: backgroundColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
+          children: <Widget>[
             Container(
               width: 60,
               height: 60,
@@ -138,12 +146,13 @@ class _MainPageState extends State<MainPage> {
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: IconButton(
-                icon: const Icon(Icons.search, color: Colors.white),
-                onPressed: () {
-                  // Add onPressed logic here
-                },
-                tooltip: 'Buscar',
+              child: Semantics(
+                label: 'Search button',
+                child: IconButton(
+                  icon: const Icon(Icons.search, color: Colors.white),
+                  onPressed: () {},
+                  tooltip: 'Buscar',
+                ),
               ),
             ),
             Container(
@@ -154,12 +163,13 @@ class _MainPageState extends State<MainPage> {
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: IconButton(
-                icon: const Icon(Icons.mic, color: Colors.white),
-                onPressed: () {
-                  // Add onPressed logic here
-                },
-                tooltip: 'Comando de voz',
+              child: Semantics(
+                label: 'Voice command button',
+                child: IconButton(
+                  icon: const Icon(Icons.mic, color: Colors.white),
+                  onPressed: () {},
+                  tooltip: 'Comando de voz',
+                ),
               ),
             ),
             Container(
@@ -170,12 +180,14 @@ class _MainPageState extends State<MainPage> {
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: IconButton(
-                icon: const Icon(Icons.library_books_outlined, color: Colors.white),
-                onPressed: () {
-                  // Add onPressed logic here
-                },
-                tooltip: 'Texto',
+              child: Semantics(
+                label: 'Open library',
+                child: IconButton(
+                  icon: const Icon(Icons.library_books_outlined,
+                      color: Colors.white),
+                  onPressed: () {},
+                  tooltip: 'Texto',
+                ),
               ),
             ),
           ],
