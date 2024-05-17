@@ -52,6 +52,11 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   late CameraController _controller;
 
+  late FocusNode searchFocusNode;
+  late FocusNode micFocusNode;
+  late FocusNode aspectRatioFocusNode;
+  
+  
   @override
   void initState() {
     super.initState();
@@ -62,15 +67,25 @@ class _MainPageState extends State<MainPage> {
       }
       setState(() {});
     });
+
+    searchFocusNode = FocusNode();
+    micFocusNode = FocusNode();
+    aspectRatioFocusNode = FocusNode();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+
+    searchFocusNode.dispose();
+    micFocusNode.dispose();
+    aspectRatioFocusNode.dispose();
+
+
     super.dispose();
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
     if (!_controller.value.isInitialized) {
       return Container();
@@ -125,6 +140,7 @@ class _MainPageState extends State<MainPage> {
                   ),
                   onPressed: () {
                     // Add onPressed logic here
+                    print("11111111111111111111111");
                   },
                   tooltip: 'Captura',
                 ),
@@ -137,56 +153,86 @@ class _MainPageState extends State<MainPage> {
         color: backgroundColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Semantics(
-                label: 'Search button',
-                child: IconButton(
-                  icon: const Icon(Icons.search, color: Colors.white),
-                  onPressed: () {},
-                  tooltip: 'Buscar',
+          children: [
+            // Search Button
+            Focus(
+              focusNode: searchFocusNode,
+              child: GestureDetector(
+                onTap: () {
+                  // Add onPressed logic here
+                  print("Search button pressed");
+                },
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: searchFocusNode.hasFocus ? Colors.grey : Colors.blue,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(10),
+                                          ),
+                  child: Semantics(
+                    label: 'Search button',
+                    child: IconButton(
+                      icon: const Icon(Icons.search, color: Colors.white),
+                      onPressed: () {},
+                      tooltip: 'Buscar',
+                                    ),
+                                  ),
+                                ),
+                              ),
+                       ),
+            // Mic Button
+            Focus(
+              focusNode: micFocusNode,
+              child: GestureDetector(
+                onTap: () {
+                  // Add onPressed logic here
+                  print("Mic button pressed");
+                },
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: micFocusNode.hasFocus ? Colors.grey : Colors.blue,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Semantics(
+                    label: 'Voice command button',
+                    child: IconButton(
+                      icon: const Icon(Icons.mic, color: Colors.white),
+                      onPressed: () {},
+                      tooltip: 'Comando de voz',
+                    ),
+                  ),
                 ),
               ),
             ),
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Semantics(
-                label: 'Voice command button',
-                child: IconButton(
-                  icon: const Icon(Icons.mic, color: Colors.white),
-                  onPressed: () {},
-                  tooltip: 'Comando de voz',
-                ),
-              ),
-            ),
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Semantics(
-                label: 'Open library',
-                child: IconButton(
-                  icon: const Icon(Icons.library_books_outlined,
-                      color: Colors.white),
-                  onPressed: () {},
-                  tooltip: 'Texto',
+            // Aspect Ratio Button
+            Focus(
+              focusNode: aspectRatioFocusNode,
+              child: GestureDetector(
+                onTap: () {
+                  // Add onPressed logic here
+                  print("Aspect Ratio button pressed");
+                },
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: aspectRatioFocusNode.hasFocus ? Colors.grey : Colors.blue,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Semantics(
+                    label: 'Open library',
+                    child: IconButton(
+                      icon: const Icon(Icons.library_books_outlined,
+                          color: Colors.white),
+                      onPressed: () {},
+                      tooltip: 'Texto',
+                      ),
+                    ),
                 ),
               ),
             ),
@@ -196,3 +242,4 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
+
