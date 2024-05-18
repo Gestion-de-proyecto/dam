@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,19 +73,57 @@ class _MainPageState extends State<MainPage> {
     searchFocusNode = FocusNode();
     micFocusNode = FocusNode();
     aspectRatioFocusNode = FocusNode();
+
+
+    _checkFirstRun();
   }
 
   @override
   void dispose() {
     _controller.dispose();
-
     searchFocusNode.dispose();
     micFocusNode.dispose();
     aspectRatioFocusNode.dispose();
-
-
     super.dispose();
   }
+
+  Future<void> _checkFirstRun() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
+
+    if (isFirstRun){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showInstructionsDialog();
+       });
+
+       await prefs.setBool('isFirstRun', false);
+    }
+  }
+
+  void _showInstructionsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(Instructions.title), // Usa la constante para el título
+          content: const Scrollbar(
+            child: SingleChildScrollView(
+              child: Text(Instructions.content), // Usa la constante para el contenido
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cerrar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
 @override
   Widget build(BuildContext context) {
@@ -111,10 +151,20 @@ class _MainPageState extends State<MainPage> {
             label: 'Change theme',
             child: IconButton(
               icon: const Icon(Icons.brightness_6),
+              color: Colors.white,
               onPressed: widget.toggleTheme,
               tooltip: 'Cambiar tema',
             ),
           ),
+          Semantics(
+              label: 'Show instructions',
+              child: IconButton(
+                icon: const Icon(Icons.info_outline),
+                color: Colors.white,
+                onPressed: _showInstructionsDialog,
+                tooltip: 'Mostrar Instrucciones',
+              ),
+          )
         ],
       ),
       body: Stack(
