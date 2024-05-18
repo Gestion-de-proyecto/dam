@@ -91,7 +91,7 @@ class _MainPageState extends State<MainPage> {
       return Container();
     }
 
-    Color backgroundColor = Theme.of(context).bottomAppBarColor;
+    Color backgroundColor = Theme.of(context).colorScheme.surface;
 
     return Scaffold(
       backgroundColor: Colors.blue,
