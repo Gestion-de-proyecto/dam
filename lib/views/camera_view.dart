@@ -7,9 +7,13 @@ import 'package:get/get.dart';
 
 class CameraView extends StatelessWidget {
   const CameraView({super.key});
+  
 
   @override
   Widget build(BuildContext context) {
+    late FocusNode searchFocusNode;
+    late FocusNode micFocusNode;
+    late FocusNode aspectRatioFocusNode;
     final scanController = ScanController();
     Color backgroundColor = Theme.of(context).bottomAppBarColor;
   // ignore: prefer_function_declarations_over_variables
@@ -18,8 +22,11 @@ class CameraView extends StatelessWidget {
           ? ThemeMode.dark
           : ThemeMode.light;
       Get.changeThemeMode(currentTheme);
+    
     }
-
+    searchFocusNode = FocusNode();
+    micFocusNode = FocusNode();
+    aspectRatioFocusNode = FocusNode();
     print('estoy en camara');
     return Scaffold(
       backgroundColor: Colors.blue,
@@ -81,47 +88,95 @@ class CameraView extends StatelessWidget {
           : const Center(child: Text("Loading Preview...")) ;
         }
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        width: double.infinity,
-        height: 80,
+      bottomNavigationBar: BottomAppBar(
+        color: backgroundColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildIconButton(Icons.search, Colors.white),
-            _buildIconButton(Icons.mic, Colors.white),
-            _buildIconButton(Icons.aspect_ratio, Colors.white),
+            // Search Button
+            Focus(
+              focusNode: searchFocusNode,
+              child: GestureDetector(
+                onTap: () {
+                  // Add onPressed logic here
+                  print("Search button pressed");
+                },
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: searchFocusNode.hasFocus ? Colors.grey : Colors.blue,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(10),
+                                          ),
+                  child: Semantics(
+                    label: 'Search button',
+                    child: IconButton(
+                      icon: const Icon(Icons.search, color: Colors.white),
+                      onPressed: () {},
+                      tooltip: 'Buscar',
+                                    ),
+                                  ),
+                                ),
+                              ),
+                       ),
+            // Mic Button
+            Focus(
+              focusNode: micFocusNode,
+              child: GestureDetector(
+                onTap: () {
+                  // Add onPressed logic here
+                  print("Mic button pressed");
+                },
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: micFocusNode.hasFocus ? Colors.grey : Colors.blue,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Semantics(
+                    label: 'Voice command button',
+                    child: IconButton(
+                      icon: const Icon(Icons.mic, color: Colors.white),
+                      onPressed: () {},
+                      tooltip: 'Comando de voz',
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // Aspect Ratio Button
+            Focus(
+              focusNode: aspectRatioFocusNode,
+              child: GestureDetector(
+                onTap: () {
+                  // Add onPressed logic here
+                  print("Aspect Ratio button pressed");
+                },
+                child: Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: aspectRatioFocusNode.hasFocus ? Colors.grey : Colors.blue,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Semantics(
+                    label: 'Open library',
+                    child: IconButton(
+                      icon: const Icon(Icons.library_books_outlined,
+                          color: Colors.white),
+                      onPressed: () {},
+                      tooltip: 'Texto',
+                      ),
+                    ),
+                ),
+              ),
+            ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildIconButton(IconData iconData, Color color) {
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        color: Colors.blue, // This ensures the button's background remains white
-        shape: BoxShape.rectangle,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: IconButton(
-        icon: Icon(iconData, color: color),
-        onPressed: () {
-          // Add onPressed logic here
-        },
       ),
     );
   }
