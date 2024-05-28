@@ -24,14 +24,16 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.example.ejemplo"
-    compileSdk 34
+    compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-       
-    }
+        lintOptions {
+            warning 'Unchecked'
+            warning 'Deprecation'
+        }}
     tasks.withType(JavaCompile) {
         options.compilerArgs << "-Xlint:unchecked"
     }
