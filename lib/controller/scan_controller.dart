@@ -102,7 +102,7 @@ class ScanController extends GetxController {
         var ourDetectedObject = detector.first;
         print('dentro del detector cuando sea diferente de null');
         if(ourDetectedObject['confidenceInClass']*100>45){
-          label = detector.first['detectedClass'].toString();
+          labelf = detector.first['detectedClass'].toString();
           h = ourDetectedObject['react']['h'];
           w = ourDetectedObject['react']['w'];
           x = ourDetectedObject['react']['x'];
