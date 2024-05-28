@@ -33,7 +33,7 @@ class ScanController extends GetxController {
   var cameraCount = 0;
 
   double x = 0.0, y = 0.0, w = 0.0, h = 0.0;
-  var label = "";
+  var labelf = "";
 
   initCamera() async {
     if (await Permission.camera.request().isGranted)
