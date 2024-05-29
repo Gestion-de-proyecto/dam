@@ -92,10 +92,20 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                 },
               ),
             Scaffold(
+              backgroundColor: Colors.transparent,
               appBar: AppBar(
-                title: const Text('DAM, Modo reconocimiento de textp'),
-              ),
-              backgroundColor: _isPermissionGranted ? Colors.transparent : null,
+                  backgroundColor: const Color.fromARGB(255, 33, 150, 243),
+                  elevation: 0,
+                  leading: Image.asset('assets/Logo.png'),
+                  title: const Center(
+                      child: Text(
+                    "DAM - Reconocimiento de texto",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ))),
               body: _isPermissionGranted
                   ? Column(
                       children: [
@@ -107,7 +117,7 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                           child: Center(
                             child: ElevatedButton(
                               onPressed: _scanImage,
-                              child: const Text('Scan text'),
+                              child: const Text('Escanear texto'),
                             ),
                           ),
                         ),
@@ -122,6 +132,69 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
                         ),
                       ),
                     ),
+              bottomNavigationBar: BottomAppBar(
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Focus(
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Semantics(
+                            label: 'Search Button',
+                            child: IconButton(
+                              icon:
+                                  const Icon(Icons.search, color: Colors.white),
+                              onPressed: () {},
+                              tooltip: 'Buscar',
+                            )),
+                      ),
+                    ),
+                    Focus(
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Semantics(
+                          label: 'Voice command button',
+                          child: IconButton(
+                            icon: const Icon(Icons.mic, color: Colors.white),
+                            onPressed: () {},
+                            tooltip: 'Comando de voz',
+                          ),
+                        ),
+                      ),
+                    ),
+                    Focus(
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Semantics(
+                          label: 'Text Button',
+                          child: IconButton(
+                            icon: const Icon(Icons.library_books_outlined,
+                                color: Colors.white),
+                            onPressed: () {},
+                            tooltip: 'Texto',
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         );

@@ -13,7 +13,22 @@ class ResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Result Screen")),
+              backgroundColor: Colors.transparent,
+              appBar: AppBar(           
+                backgroundColor: const Color.fromARGB(255, 33, 150, 243),
+                elevation: 0,
+                leading: Image.asset('assets/Logo.png'),
+                title: const Center(
+                  child: Text(
+                    "DAM - Reconocimiento de texto",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ))
+              ),
       body: HomePage(text: text),
     );
   }
