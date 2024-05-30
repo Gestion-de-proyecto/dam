@@ -128,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                     text: widget.text.substring(_currentWordStart!, _currentWordEnd),
                     style: const TextStyle(
                       color: Colors.white,
-                      backgroundColor: Colors.purpleAccent,
+                      backgroundColor: Colors.blue,
                     ),
                   ),
                 if (_currentWordEnd != null)

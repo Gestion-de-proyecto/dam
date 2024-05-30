@@ -3,6 +3,8 @@ import 'package:dam/controller/scan_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dam/texto.dart';
+import 'package:dam/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CameraView extends StatelessWidget {
   const CameraView({super.key});
@@ -21,6 +23,43 @@ class CameraView extends StatelessWidget {
           : ThemeMode.light;
       Get.changeThemeMode(currentTheme);
     }
+        void _showInstructionsDialog() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text(Instructions.title),
+            content: const Scrollbar(
+              child: SingleChildScrollView(
+                child: Text(Instructions.content),
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cerrar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        },
+      );
+    }
+
+    Future<void> _checkFirstRun() async{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
+
+      if (isFirstRun){
+        WidgetsBinding.instance.addPostFrameCallback((_){
+          _showInstructionsDialog();
+
+        });
+        await prefs.setBool('isFirstRun', false);
+      }
+    }
+
 
     searchFocusNode = FocusNode();
     micFocusNode = FocusNode();
@@ -48,6 +87,15 @@ class CameraView extends StatelessWidget {
             icon: const Icon(Icons.brightness_6),
             onPressed: toggleTheme,
           ),
+          Semantics(
+            label: 'Show instructions',
+            child: IconButton(
+              icon: const Icon(Icons.info_outline),
+              color: Colors.white,
+              onPressed: _showInstructionsDialog,
+              tooltip: 'Mostrar Instrucciones',
+            ),
+          )
         ],
       ),
       body: GetBuilder<ScanController>(
