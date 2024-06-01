@@ -1,5 +1,6 @@
 
 
+
 import 'package:camera/camera.dart';
 import 'package:flutter_tflite/flutter_tflite.dart';
 import 'package:get/get.dart';
@@ -34,7 +35,9 @@ class ScanController extends GetxController {
   var cameraCount = 0;
 
   double x = 0.0, y = 0.0, w = 0.0, h = 0.0;
+
   var labelf = "";
+
 
   initCamera() async {
     if (await Permission.camera.request().isGranted)
