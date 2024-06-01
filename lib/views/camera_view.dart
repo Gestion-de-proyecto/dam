@@ -99,6 +99,7 @@ class CameraView extends StatelessWidget {
         ],
       ),
       body: GetBuilder<ScanController>(
+
           init: scanController,
           builder: (controller) {
             return controller.isCameraInicialized.value
@@ -130,6 +131,7 @@ class CameraView extends StatelessWidget {
                   )
                 : const Center(child: Text("Loading Preview..."));
           }),
+
       bottomNavigationBar: BottomAppBar(
         color: backgroundColor,
         child: Row(
