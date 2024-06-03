@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:dam/consts.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:dam/main.dart';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 class ResultScreen extends StatelessWidget {
   final String text;
 
@@ -13,22 +10,23 @@ class ResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-              backgroundColor: Colors.transparent,
-              appBar: AppBar(           
-                backgroundColor: const Color.fromARGB(255, 33, 150, 243),
-                elevation: 0,
-                leading: Image.asset('assets/Logo.png'),
-                title: const Center(
-                  child: Text(
-                    "DAM - Reconocimiento de texto",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold
-                    ),
-                  ))
-              ),
+      backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 33, 150, 243),
+        elevation: 0,
+        leading: Image.asset('assets/Logo.png'),
+        title: const Center(
+          child: Text(
+            "DAM - Reconocimiento de texto",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
       body: HomePage(text: text),
     );
   }
@@ -44,7 +42,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  FlutterTts _flutterTts = FlutterTts();
+  final FlutterTts _flutterTts = FlutterTts();
   List<Map<String, String>> _voices = [];
   Map<String, String>? _currentVoice;
 
@@ -87,6 +85,16 @@ class _HomePageState extends State<HomePage> {
 
   void setVoice(Map<String, String> voice) {
     _flutterTts.setVoice({"name": voice["name"]!, "locale": voice["locale"]!});
+  }
+
+  @override
+  void dispose() {
+    _flutterTts.stop(); // Detiene el habla cuando se destruye el widget
+    super.dispose();
+    Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyApp()),
+                        );
   }
 
   @override
@@ -159,23 +167,10 @@ class _HomePageState extends State<HomePage> {
           _currentVoice = value;
           if (value != null) {
             setVoice(value);
-            _speakText(); // Habla de nuevo si se selecciona una nueva voz
+            _speakText();
           }
         });
       },
     );
   }
 }
-
-
-
-/*@override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('Result'),
-        ),
-        body: Container(
-          padding: const EdgeInsets.all(30.0),
-          child: Text(text),
-        ),
-      );*/

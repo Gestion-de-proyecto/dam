@@ -59,8 +59,6 @@ class CameraView extends StatelessWidget {
         await prefs.setBool('isFirstRun', false);
       }
     }
-
-
     searchFocusNode = FocusNode();
     micFocusNode = FocusNode();
     aspectRatioFocusNode = FocusNode();
