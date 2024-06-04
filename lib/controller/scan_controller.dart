@@ -72,8 +72,8 @@ class ScanController extends GetxController {
 
   initTFLite() async{
     await Tflite.loadModel(
-      model: "assets/model.tflite",
-      labels: "assets/labels.txt",
+      model: "assets/yolov2_tiny.tflite",
+      labels: "assets/yolov2_tiny.txt",
       isAsset: true,
       numThreads: 1,
       useGpuDelegate: false,
