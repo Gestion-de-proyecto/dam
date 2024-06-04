@@ -12,6 +12,7 @@ class CameraView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     late FocusNode searchFocusNode;
+    String busqueda = '';
     late FocusNode micFocusNode;
     late FocusNode aspectRatioFocusNode;
     final scanController = ScanController();
@@ -47,6 +48,8 @@ class CameraView extends StatelessWidget {
       );
     }
 
+
+
     Future<void> _checkFirstRun() async{
       SharedPreferences prefs = await SharedPreferences.getInstance();
       bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
@@ -59,6 +62,53 @@ class CameraView extends StatelessWidget {
         await prefs.setBool('isFirstRun', false);
       }
     }
+
+       Future<void> _showSearchDialog(BuildContext context) async {
+      TextEditingController searchController = TextEditingController();
+
+      return showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Buscar'),
+            content: TextField(
+              controller: searchController,
+              decoration: const InputDecoration(hintText: 'Ingrese su búsqueda'),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancelar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text('Buscar'),
+                onPressed: () {
+                  String searchText = searchController.text;
+                  print('Texto ingresado: $searchText');
+                  if (searchText == scanController.labelf) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Encontrado el objeto'),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Objeto no encontrado'),
+                      ),
+                    );
+                  }
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+    
     searchFocusNode = FocusNode();
     micFocusNode = FocusNode();
     aspectRatioFocusNode = FocusNode();
@@ -155,7 +205,9 @@ class CameraView extends StatelessWidget {
                     label: 'Search button',
                     child: IconButton(
                       icon: const Icon(Icons.search, color: Colors.white),
-                      onPressed: () {},
+                      onPressed: () {
+                        _showSearchDialog(context);
+                      },
                       tooltip: 'Buscar',
                     ),
                   ),
