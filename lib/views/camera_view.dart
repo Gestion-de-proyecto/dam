@@ -8,23 +8,25 @@ import 'package:dam/texto.dart';
 import 'package:dam/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
-import 'package:speech_to_text/speech_to_text.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+
 
 
 
 class CameraView extends StatelessWidget {
   const CameraView({super.key});
-  
 
   @override
   Widget build(BuildContext context) {
     late FocusNode searchFocusNode;
-    
+
     String busqueda = '';
     late FocusNode micFocusNode;
     late FocusNode aspectRatioFocusNode;
     final scanController = ScanController();
     Color backgroundColor = Theme.of(context).bottomAppBarColor;
+    final FlutterTts _flutterTts = FlutterTts();
+
     // ignore: prefer_function_declarations_over_variables
     void toggleTheme() {
       ThemeMode currentTheme = Get.theme!.brightness == Brightness.light
@@ -75,11 +77,9 @@ class CameraView extends StatelessWidget {
       TextEditingController searchController = TextEditingController();
       bool isFound = false;
       bool dialogClosed = false;
-              final SpeechToText _speechToText = SpeechToText();
 
       await showDialog<void>(
         context: context,
-
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Buscar'),
@@ -132,7 +132,12 @@ class CameraView extends StatelessWidget {
         }
       });
     }
-
+  void _speakText(String text) async {
+    await _flutterTts.speak(text);
+  }
+Timer.periodic(Duration(seconds: 30), (timer) {
+      _speakText(scanController.labelf);
+    });
 
     
     searchFocusNode = FocusNode();
@@ -194,6 +199,7 @@ class CameraView extends StatelessWidget {
                           child: Center(
                               child: Text(
                             '${scanController.labelf}',
+                            
                             style: TextStyle(
                               color: const Color.fromARGB(255, 10, 10, 10),
                               fontSize: 20,
