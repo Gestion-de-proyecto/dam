@@ -8,15 +8,18 @@ import 'package:dam/texto.dart';
 import 'package:dam/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 
 
 class CameraView extends StatelessWidget {
   const CameraView({super.key});
+  
 
   @override
   Widget build(BuildContext context) {
     late FocusNode searchFocusNode;
+    
     String busqueda = '';
     late FocusNode micFocusNode;
     late FocusNode aspectRatioFocusNode;
@@ -72,9 +75,11 @@ class CameraView extends StatelessWidget {
       TextEditingController searchController = TextEditingController();
       bool isFound = false;
       bool dialogClosed = false;
+              final SpeechToText _speechToText = SpeechToText();
 
       await showDialog<void>(
         context: context,
+
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Buscar'),
