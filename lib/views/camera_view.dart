@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:camera/camera.dart';
 import 'package:dam/controller/scan_controller.dart';
 import 'package:flutter/material.dart';
@@ -63,10 +65,12 @@ class CameraView extends StatelessWidget {
       }
     }
 
-       Future<void> _showSearchDialog(BuildContext context) async {
+    Future<void> _showSearchDialog(BuildContext context) async {
       TextEditingController searchController = TextEditingController();
+      bool isFound = false;
+      bool dialogClosed = false;
 
-      return showDialog<void>(
+      await showDialog<void>(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -80,26 +84,12 @@ class CameraView extends StatelessWidget {
                 child: const Text('Cancelar'),
                 onPressed: () {
                   Navigator.of(context).pop();
+                  dialogClosed = true;
                 },
               ),
               TextButton(
                 child: const Text('Buscar'),
                 onPressed: () {
-                  String searchText = searchController.text;
-                  print('Texto ingresado: $searchText');
-                  if (searchText == scanController.labelf) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Encontrado el objeto'),
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Objeto no encontrado'),
-                      ),
-                    );
-                  }
                   Navigator.of(context).pop();
                 },
               ),
@@ -107,7 +97,33 @@ class CameraView extends StatelessWidget {
           );
         },
       );
+
+      Timer.periodic(Duration(seconds: 1), (timer) {
+        if (timer.tick >= 40) {
+          if (!isFound) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Objeto no encontrado'),
+              ),
+            );
+          }
+          timer.cancel();
+        } else {
+          String searchText = searchController.text;
+          if (searchText == scanController.labelf && !dialogClosed) {
+            isFound = true;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Encontrado el objeto'),
+              ),
+            );
+            timer.cancel();
+          }
+        }
+      });
     }
+
+
     
     searchFocusNode = FocusNode();
     micFocusNode = FocusNode();
