@@ -6,9 +6,12 @@ import 'package:flutter_tflite/flutter_tflite.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class ScanController extends GetxController {
   String labelf = '';
+
+
   String get detectedLabel => labelf;
   final logger = Logger();
   @override
@@ -17,7 +20,6 @@ class ScanController extends GetxController {
     initCamera();
     initTFLite();
   }
-
   @override
   void dispose() {
 
@@ -123,4 +125,5 @@ class ScanController extends GetxController {
     
 
   }
+  
 }

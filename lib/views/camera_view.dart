@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:vibration/vibration.dart';
 
 class CameraView extends StatefulWidget {
   const CameraView({super.key});
@@ -182,9 +183,11 @@ class _CameraViewState extends State<CameraView> {
         String searchText = searchController.text;
         if (searchText == scanController.labelf && !dialogClosed) {
           isFound = true;
+          Vibration.vibrate(pattern: [0, 500, 500, 500]);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Encontrado el objeto'),
+              
             ),
           );
           timer.cancel();
