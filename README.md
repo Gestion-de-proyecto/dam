@@ -24,10 +24,11 @@ tareas por cumplir en cada uno de estos repartiéndose a cada desarrollador del 
 realizó una reunión semanal para comentar avances o dificultades en el desarrollo de las
 tareas asignadas, además de realizar retrospectivas tras la finalización del sprint, optando en
 este último por el modelo de las 4L
-
 ## Equipo
-Scrum Master : KAREN MORENO
-Product Owner : BRAYAN ACUÑA
-DESAROLLADOR : LINA MARCELA
-DESAROLLADOR : JUAN CASTILLO
-DESAROLLADOR : VICTOR ÑAÑEZ
+
+- **Scrum Master:** Karen Moreno
+- **Product Owner:** Brayan Acuña
+- **Desarrolladores:**
+  - Lina Marcela
+  - Juan Castillo
+  - Víctor Ñáñez
