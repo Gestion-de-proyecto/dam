@@ -34,3 +34,4 @@ este último por el modelo de las 4L
   - Víctor Ñáñez
 ## APLICACION
 ![alt text](image.png)
+![alt text](<Imagen de WhatsApp 2024-06-04 a las 22.35.44_c9a3cacb.jpg>)
