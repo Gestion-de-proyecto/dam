@@ -1,6 +1,5 @@
 
 import 'package:dam/views/camera_view.dart';
-
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
@@ -17,8 +16,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'DAM',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        
+       
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),

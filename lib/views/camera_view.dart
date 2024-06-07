@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:dam/controller/scan_controller.dart';
 import 'package:flutter/material.dart';
@@ -5,66 +6,209 @@ import 'package:get/get.dart';
 import 'package:dam/texto.dart';
 import 'package:dam/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:vibration/vibration.dart';
 
-class CameraView extends StatelessWidget {
+class CameraView extends StatefulWidget {
   const CameraView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    late FocusNode searchFocusNode;
-    late FocusNode micFocusNode;
-    late FocusNode aspectRatioFocusNode;
-    final scanController = ScanController();
-    Color backgroundColor = Theme.of(context).bottomAppBarColor;
-    // ignore: prefer_function_declarations_over_variables
-    void toggleTheme() {
-      ThemeMode currentTheme = Get.theme!.brightness == Brightness.light
-          ? ThemeMode.dark
-          : ThemeMode.light;
-      Get.changeThemeMode(currentTheme);
-    }
-        void _showInstructionsDialog() {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text(Instructions.title),
-            content: const Scrollbar(
-              child: SingleChildScrollView(
-                child: Text(Instructions.content),
-              ),
+  _CameraViewState createState() => _CameraViewState();
+}
+
+class _CameraViewState extends State<CameraView> {
+  late FocusNode searchFocusNode;
+  late FocusNode micFocusNode;
+  late FocusNode aspectRatioFocusNode;
+  final scanController = ScanController();
+  final FlutterTts _flutterTts = FlutterTts();
+
+  SpeechToText _speechToText = SpeechToText();
+  bool _speechEnabled = false;
+  String _lastWords = '';
+  bool _isListening = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initSpeech();
+    _checkFirstRun();
+  }
+
+  void _initSpeech() async {
+    _speechEnabled = await _speechToText.initialize();
+    setState(() {});
+  }
+
+  void _startListening() async {
+    await _speechToText.listen(onResult: _onSpeechResult);
+    setState(() {
+      _isListening = true;
+    });
+  }
+
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {
+      _isListening = false;
+    });
+  }
+
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      _lastWords = result.recognizedWords;
+    });
+  }
+
+  void toggleTheme() {
+    ThemeMode currentTheme = Get.theme!.brightness == Brightness.light
+        ? ThemeMode.dark
+        : ThemeMode.light;
+    Get.changeThemeMode(currentTheme);
+  }
+
+  void _showInstructionsDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(Instructions.title),
+          content: const Scrollbar(
+            child: SingleChildScrollView(
+              child: Text(Instructions.content),
             ),
-            actions: <Widget>[
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cerrar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  void _speakText(String text) async {
+    await _flutterTts.speak(text);
+  }
+
+  Future<void> _checkFirstRun() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
+
+    if (isFirstRun) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showInstructionsDialog();
+      });
+      await prefs.setBool('isFirstRun', false);
+    }
+  }
+
+  Future<void> _showSearchDialog(BuildContext context) async {
+    TextEditingController searchController = TextEditingController();
+    bool isFound = false;
+    bool dialogClosed = false;
+    String lastWords = '';
+    bool speechEnabled = false;
+
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Buscar'),
+          content: TextField(
+            controller: searchController,
+            decoration: const InputDecoration(hintText: 'Ingrese su búsqueda'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                dialogClosed = true;
+              },
+            ),
+            TextButton(
+              child: const Text('Buscar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Voz'),
+              onPressed: () {
+                if (_speechToText.isListening) {
+                  _stopListening();
+                  searchController.text = _lastWords;
+                } else {
+                  _startListening();
+                }
+                setState(() {
+                  speechEnabled = _speechToText.isListening;
+                });
+              },
+            ),
+            if (speechEnabled)
               TextButton(
-                child: const Text('Cerrar'),
+                child: const Text('Detener voz'),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  _stopListening();
+                  searchController.text = _lastWords;
+                  setState(() {
+                    speechEnabled = false;
+                  });
                 },
-              )
-            ],
+              ),
+          ],
+        );
+      },
+    );
+
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      if (timer.tick >= 40) {
+        if (!isFound) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Objeto no encontrado'),
+            ),
           );
-        },
-      );
-    }
-
-    Future<void> _checkFirstRun() async{
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      bool isFirstRun = prefs.getBool('isFirstRun') ?? true;
-
-      if (isFirstRun){
-        WidgetsBinding.instance.addPostFrameCallback((_){
-          _showInstructionsDialog();
-
-        });
-        await prefs.setBool('isFirstRun', false);
+        }
+        timer.cancel();
+      } else {
+        String searchText = searchController.text;
+        if (searchText == scanController.labelf && !dialogClosed) {
+          isFound = true;
+          Vibration.vibrate(pattern: [0, 500, 500, 500]);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Encontrado el objeto'),
+              
+            ),
+          );
+          timer.cancel();
+        }
       }
-    }
+    });
+    
+  }
+  
+  
+  
 
-
+  @override
+  Widget build(BuildContext context) {
     searchFocusNode = FocusNode();
     micFocusNode = FocusNode();
     aspectRatioFocusNode = FocusNode();
     print('estoy en camara');
+    Timer.periodic(Duration(seconds: 30), (timer) {
+    _speakText(scanController.labelf);
+  });
     return Scaffold(
       backgroundColor: Colors.blue,
       appBar: AppBar(
@@ -99,41 +243,40 @@ class CameraView extends StatelessWidget {
         ],
       ),
       body: GetBuilder<ScanController>(
-
-          init: scanController,
-          builder: (controller) {
-            return controller.isCameraInicialized.value
-                ? Stack(
-                    children: [
-                      Positioned.fill(
-                        child: CameraPreview(controller.cameraController),
-                      ),
-                      Center(
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                                color: Colors.deepPurple, width: 4.0),
-                          ),
-                          child: Center(
-                              child: Text(
-                            '${scanController.labelf}',
-                            style: TextStyle(
-                              color: const Color.fromARGB(255, 10, 10, 10),
-                              fontSize: 20,
-                            ),
-                          )),
+        init: scanController,
+        builder: (controller) {
+          return controller.isCameraInicialized.value
+              ? Stack(
+                  children: [
+                    Positioned.fill(
+                      child: CameraPreview(controller.cameraController),
+                    ),
+                    Center(
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                              color: Colors.deepPurple, width: 4.0),
                         ),
-                      )
-                    ],
-                  )
-                : const Center(child: Text("Loading Preview..."));
-          }),
-
+                        child: Center(
+                            child: Text(
+                          '${scanController.labelf}',
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 10, 10, 10),
+                            fontSize: 20,
+                          ),
+                        )),
+                      ),
+                    )
+                  ],
+                )
+              : const Center(child: Text("Loading Preview..."));
+        },
+      ),
       bottomNavigationBar: BottomAppBar(
-        color: backgroundColor,
+        color: Theme.of(context).bottomAppBarColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -142,7 +285,6 @@ class CameraView extends StatelessWidget {
               focusNode: searchFocusNode,
               child: GestureDetector(
                 onTap: () {
-                  // Add onPressed logic here
                   print("Search button pressed");
                 },
                 child: Container(
@@ -157,7 +299,9 @@ class CameraView extends StatelessWidget {
                     label: 'Search button',
                     child: IconButton(
                       icon: const Icon(Icons.search, color: Colors.white),
-                      onPressed: () {},
+                      onPressed: () {
+                        _showSearchDialog(context);
+                      },
                       tooltip: 'Buscar',
                     ),
                   ),
@@ -169,7 +313,6 @@ class CameraView extends StatelessWidget {
               focusNode: micFocusNode,
               child: GestureDetector(
                 onTap: () {
-                  // Add onPressed logic here
                   print("Mic button pressed");
                 },
                 child: Container(
@@ -196,7 +339,6 @@ class CameraView extends StatelessWidget {
               focusNode: aspectRatioFocusNode,
               child: GestureDetector(
                 onTap: () {
-                  // Add onPressed logic here
                   print("Aspect Ratio button pressed");
                 },
                 child: Container(

@@ -2,7 +2,7 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <application
-        android:label="ejemplo"
+        android:label="DAM"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
