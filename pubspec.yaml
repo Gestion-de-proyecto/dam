@@ -1,4 +1,4 @@
-name: ejemplo
+name: dam
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -41,6 +41,12 @@ dependencies:
   image: ^3.3.0
   flutter_tflite: ^1.0.1
   logger: ^2.2.0
+  google_mlkit_text_recognition: ^0.13.0
+  flutter_tts: ^3.8.3
+  shared_preferences: ^2.2.3 
+  vibration: ^1.9.0
+  speech_to_text: ^6.3.0
+
 
 dev_dependencies:
   flutter_test:

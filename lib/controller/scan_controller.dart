@@ -1,13 +1,18 @@
 
 
+
 import 'package:camera/camera.dart';
 import 'package:flutter_tflite/flutter_tflite.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class ScanController extends GetxController {
-  
+  String labelf = '';
+
+
+  String get detectedLabel => labelf;
   final logger = Logger();
   @override
   void onInit(){
@@ -15,7 +20,6 @@ class ScanController extends GetxController {
     initCamera();
     initTFLite();
   }
-
   @override
   void dispose() {
 
@@ -33,7 +37,7 @@ class ScanController extends GetxController {
   var cameraCount = 0;
 
   double x = 0.0, y = 0.0, w = 0.0, h = 0.0;
-  var label = "";
+
 
   initCamera() async {
     if (await Permission.camera.request().isGranted)
@@ -97,12 +101,19 @@ class ScanController extends GetxController {
       threshold: 0.1,
       );
       print('dentro del detector antes del if');
-      print('Resultado del detector: $detector');
+      //print('Resultado del detector: $detector');
       if (detector != null && detector.isNotEmpty) {
         var ourDetectedObject = detector.first;
         print('dentro del detector cuando sea diferente de null');
+        
+       print('Resultado del detector: $detector');
+       String label = detector[0]['label'];
+        print('El valor de label es: $label');
+        labelf = label;
+        
         if(ourDetectedObject['confidenceInClass']*100>45){
-          label = detector.first['detectedClass'].toString();
+         
+         
           h = ourDetectedObject['react']['h'];
           w = ourDetectedObject['react']['w'];
           x = ourDetectedObject['react']['x'];
@@ -114,4 +125,5 @@ class ScanController extends GetxController {
     
 
   }
+  
 }
