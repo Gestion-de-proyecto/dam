@@ -35,3 +35,32 @@ este último por el modelo de las 4L
 ## APLICACION
 ![alt text](image.png)
 ![alt text](<Imagen de WhatsApp 2024-06-04 a las 22.35.44_c9a3cacb.jpg>)
+
+
+
+## Requisitos Previos
+
+Antes de comenzar, asegúrate de tener instalados los siguientes requisitos:
+
+- [Git](https://git-scm.com/)
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [Flutter](https://flutter.dev/docs/get-started/install)
+
+## Instalación
+
+Sigue los pasos a continuación para configurar y ejecutar la aplicación DAM.
+
+### 1. Clonar el Repositorio
+
+Primero, clona el repositorio de GitHub en tu máquina local:
+
+```bash
+git clone https://github.com/Gestion-de-proyecto/dam.git
+cd DAM
+
+### Configurar Flutter
+Asegúrate de tener Flutter instalado y configurado en tu máquina. Si no lo has hecho, sigue las instrucciones oficiales de Flutter para instalarlo.
+Verifica que Flutter esté correctamente instalado ejecutando:
+bash
+Copiar código
+flutter doctor
